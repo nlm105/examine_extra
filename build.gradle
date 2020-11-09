@@ -16,6 +16,10 @@ dependencies {
 	compileOnly group: 'net.runelite', name:'client', version: runeLiteVersion
 	compile 'org.junit.jupiter:junit-jupiter:5.6.2'
 
+
+// jsoup HTML parser library @ http://jsoup.org/
+	compile 'org.jsoup:jsoup:1.10.1'
+
 	compileOnly 'org.projectlombok:lombok:1.18.4'
 	annotationProcessor 'org.projectlombok:lombok:1.18.4'
 
