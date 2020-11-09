@@ -66,6 +66,7 @@ public class ExaminePanel extends PluginPanel
 	}
 
 	@Inject
+	public static JLabel heading = new JLabel();
 	public static final JLabel type = new JLabel(htmlLabel("Type: ", ""));
 	public static final JLabel name = new JLabel(htmlLabel("Name: ", ""));
 	public static final JRichTextPane wikiLnk = new JRichTextPane();
@@ -104,7 +105,7 @@ public class ExaminePanel extends PluginPanel
 
 		final Font smallFont = FontManager.getRunescapeSmallFont();
 
-		JLabel heading = new JLabel(htmlLabel("Examine Info", ""));
+		heading = new JLabel(htmlLabel("Examine Info", ""));
 		heading.setFont(smallFont);
 
 
@@ -141,7 +142,6 @@ public class ExaminePanel extends PluginPanel
 
 	public static String getWikiLink(String examineName){
 		String examineNameURL = examineName.replaceAll(" ", "_");
-		System.out.println(examineName);
 		return "<a href=\"https://oldschool.runescape.wiki/w/" + examineNameURL + "\">"
 				+ examineName + "</a>";
 	}
