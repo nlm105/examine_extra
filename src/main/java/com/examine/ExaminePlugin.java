@@ -22,17 +22,13 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package net.runelite.client.plugins.examine;
+package com.examine;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.google.inject.Provides;
-import java.time.Instant;
-import java.util.ArrayDeque;
-import java.util.Deque;
-import java.util.regex.Pattern;
-import javax.inject.Inject;
+import com.jogamp.common.util.InterruptSource;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.*;
 import net.runelite.api.events.ChatMessage;
@@ -41,9 +37,6 @@ import net.runelite.api.events.MenuOptionClicked;
 import net.runelite.api.widgets.Widget;
 import net.runelite.api.widgets.WidgetID;
 import net.runelite.api.widgets.WidgetInfo;
-import static net.runelite.api.widgets.WidgetInfo.SEED_VAULT_ITEM_CONTAINER;
-import static net.runelite.api.widgets.WidgetInfo.TO_CHILD;
-import static net.runelite.api.widgets.WidgetInfo.TO_GROUP;
 import net.runelite.api.widgets.WidgetItem;
 import net.runelite.client.chat.ChatColorType;
 import net.runelite.client.chat.ChatMessageBuilder;
@@ -54,15 +47,26 @@ import net.runelite.client.game.ItemManager;
 import net.runelite.client.game.NPCManager;
 import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
-import net.runelite.client.plugins.examine.ExaminePanel;
+import net.runelite.client.ui.ClientToolbar;
+import net.runelite.client.ui.NavigationButton;
+import net.runelite.client.util.ImageUtil;
 import net.runelite.client.util.QuantityFormatter;
 import net.runelite.client.util.Text;
 import net.runelite.http.api.examine.ExamineClient;
 import okhttp3.OkHttpClient;
+import org.apache.commons.lang3.ThreadUtils;
+
+import javax.imageio.ImageIO;
+import javax.inject.Inject;
+import java.awt.*;
 import java.awt.image.BufferedImage;
-import net.runelite.client.ui.NavigationButton;
-import net.runelite.client.ui.ClientToolbar;
-import net.runelite.client.util.ImageUtil;
+import java.io.File;
+import java.time.Instant;
+import java.util.ArrayDeque;
+import java.util.Deque;
+import java.util.regex.Pattern;
+
+import static net.runelite.api.widgets.WidgetInfo.*;
 
 
 /**
@@ -118,7 +122,7 @@ public class ExaminePlugin extends Plugin
 		final ExaminePanel panel = injector.getInstance(ExaminePanel.class);
 		panel.init();
 
-		final BufferedImage icon = ImageUtil.getResourceStreamFromClass(getClass(), "mag_glass_icon.png");
+		final BufferedImage icon = ImageIO.read(new File("src/main/resources/com.examine/mag_glass_icon.png"));
 
 		navButton = NavigationButton.builder()
 				.tooltip("Examine")
@@ -230,7 +234,7 @@ public class ExaminePlugin extends Plugin
 				return;
 		}
 
-		PendingExamine pendingExamine = new PendingExamine();
+		com.examine.PendingExamine pendingExamine = new com.examine.PendingExamine();
 		pendingExamine.setType(type);
 		pendingExamine.setId(id);
 		pendingExamine.setQuantity(quantity);

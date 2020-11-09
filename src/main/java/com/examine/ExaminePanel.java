@@ -23,19 +23,16 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package net.runelite.client.plugins.examine;
+package com.examine;
 
-import com.google.common.base.MoreObjects;
 import com.google.inject.Inject;
 import net.runelite.api.Client;
-import net.runelite.client.RuneLiteProperties;
 import net.runelite.client.account.SessionManager;
 import net.runelite.client.config.ConfigManager;
 import net.runelite.client.eventbus.EventBus;
 import net.runelite.client.eventbus.Subscribe;
 import net.runelite.client.events.SessionClose;
 import net.runelite.client.events.SessionOpen;
-import net.runelite.client.plugins.examine.JRichTextPane;
 import net.runelite.client.ui.ColorScheme;
 import net.runelite.client.ui.FontManager;
 import net.runelite.client.ui.PluginPanel;
@@ -46,7 +43,6 @@ import javax.annotation.Nullable;
 import javax.inject.Singleton;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
-import javax.swing.event.HyperlinkEvent;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -66,16 +62,26 @@ public class ExaminePanel extends PluginPanel
 //	private static final ImageIcon IMPORT_ICON;
 
 	private final JLabel loggedLabel = new JLabel();
-	private final net.runelite.client.plugins.examine.JRichTextPane emailLabel = new JRichTextPane();
+	private final JRichTextPane emailLabel = new JRichTextPane();
+
+	static
+	{
+		ARROW_RIGHT_ICON = new ImageIcon(ImageUtil.getResourceStreamFromClass(ExaminePanel.class, "/util/arrow_right.png"));
+//		GITHUB_ICON = new ImageIcon(ImageUtil.getResourceStreamFromClass(ExaminePanel.class, "github_icon.png"));
+//		DISCORD_ICON = new ImageIcon(ImageUtil.getResourceStreamFromClass(ExaminePanel.class, "discord_icon.png"));
+//		PATREON_ICON = new ImageIcon(ImageUtil.getResourceStreamFromClass(ExaminePanel.class, "patreon_icon.png"));
+//		WIKI_ICON = new ImageIcon(ImageUtil.getResourceStreamFromClass(ExaminePanel.class, "wiki_icon.png"));
+//		IMPORT_ICON = new ImageIcon(ImageUtil.getResourceStreamFromClass(ExaminePanel.class, "import_icon.png"));
+	}
 
 	@Inject
 	public static final JLabel type = new JLabel(htmlLabel("Type: ", ""));
-	private static final JLabel name = new JLabel(htmlLabel("Name: ", ""));
-	private static final net.runelite.client.plugins.examine.JRichTextPane wikiLnk = new JRichTextPane();
+	public static final JLabel name = new JLabel(htmlLabel("Name: ", ""));
+	public static final JRichTextPane wikiLnk = new JRichTextPane();
 
 
 	private JPanel syncPanel;
-	private JPanel actionsContainer;
+	private static JPanel actionsContainer;
 
 	@Inject
 	@Nullable
@@ -93,15 +99,7 @@ public class ExaminePanel extends PluginPanel
 	@Inject
 	private ConfigManager configManager;
 
-	static
-	{
-		ARROW_RIGHT_ICON = new ImageIcon(ImageUtil.getResourceStreamFromClass(ExaminePanel.class, "/util/arrow_right.png"));
-//		GITHUB_ICON = new ImageIcon(ImageUtil.getResourceStreamFromClass(ExaminePanel.class, "github_icon.png"));
-//		DISCORD_ICON = new ImageIcon(ImageUtil.getResourceStreamFromClass(ExaminePanel.class, "discord_icon.png"));
-//		PATREON_ICON = new ImageIcon(ImageUtil.getResourceStreamFromClass(ExaminePanel.class, "patreon_icon.png"));
-//		WIKI_ICON = new ImageIcon(ImageUtil.getResourceStreamFromClass(ExaminePanel.class, "wiki_icon.png"));
-//		IMPORT_ICON = new ImageIcon(ImageUtil.getResourceStreamFromClass(ExaminePanel.class, "import_icon.png"));
-	}
+
 
 	void init()
 	{
@@ -154,9 +152,9 @@ public class ExaminePanel extends PluginPanel
 
 
 
-//		actionsContainer = new JPanel();
-//		actionsContainer.setBorder(new EmptyBorder(10, 0, 0, 0));
-//		actionsContainer.setLayout(new GridLayout(0, 1, 0, 10));
+		actionsContainer = new JPanel();
+		actionsContainer.setBorder(new EmptyBorder(10, 0, 0, 0));
+		actionsContainer.setLayout(new GridLayout(0, 1, 0, 10));
 //
 //		syncPanel = buildLinkPanel(IMPORT_ICON, "Import local settings", "to remote RuneLite account", () ->
 //		{
@@ -176,8 +174,13 @@ public class ExaminePanel extends PluginPanel
 //		actionsContainer.add(buildLinkPanel(PATREON_ICON, "Become a patron to", "help support RuneLite", RuneLiteProperties.getPatreonLink()));
 //		actionsContainer.add(buildLinkPanel(WIKI_ICON, "Information about", "RuneLite and plugins", RuneLiteProperties.getWikiLink()));
 
-		examinePanel.add(buildLinkPanel(ARROW_RIGHT_ICON, "Test","test",
-				"https://oldschool.runescape.wiki/w/Golbin"));
+//		actionsContainer.setVisible(false);
+//
+//		JPanel build = buildLinkPanel(ARROW_RIGHT_ICON, "Test","test",
+//				"https://oldschool.runescape.wiki/w/Goblin");
+//		actionsContainer.add(build);
+//
+//		System.out.println(build.getComponent(0).toString());
 
 		add(examinePanel, BorderLayout.NORTH);
 //		add(actionsContainer, BorderLayout.CENTER);
@@ -193,15 +196,31 @@ public class ExaminePanel extends PluginPanel
 		type.setText(htmlLabel("Type: ", examineType));
 		name.setText(htmlLabel("Name: ", examineName));
 		wikiLnk.setContentType("text/html");
-		wikiLnk.setText("<a href=\"https://oldschool.runescape.wiki/w/" + examineName + "\">"
-				+ examineName + "</a> to go to Link");
+		wikiLnk.setText("Wiki Link: <a href=\"https://oldschool.runescape.wiki/w/" + examineName + "\">"
+				+ examineName + "</a>");
 
-//		emailLabel.setText("<a href=\"" + RUNELITE_LOGIN + "\">Login</a> to sync settings to the cloud.");
+//		JPanel panel = (JPanel)actionsContainer.getComponent(1);
+//		JLabel label1 = (JLabel)panel.getComponent(0);
+//		JLabel label2 = (JLabel)panel.getComponent(1);
+////		actionsContainer.add(buildLinkPanel(ARROW_RIGHT_ICON, "Test","test",
+////				"https://oldschool.runescape.wiki/w/"+examineName));
+//		JPanel panel = (JPanel)actionsContainer.getComponent(0);
+//		panel = buildLinkPanel(ARROW_RIGHT_ICON, "Test","test",
+//				"https://oldschool.runescape.wiki/w/"+examineName);
+
+//		actionsContainer.remove(0);
+//		actionsContainer.add(buildLinkPanel(ARROW_RIGHT_ICON, "Test","test",
+//				"https://oldschool.runescape.wiki/w/"+examineName));
+//		actionsContainer.validate();
+//		actionsContainer.repaint();
+
+		actionsContainer.setVisible(true);
 	}
 
-//	private String getWikiLink(String examineName){
-//		return
-//	}
+	private void drawThing(String examineName){
+		revalidate();
+		repaint();
+	}
 
 	/**
 	 * Builds a link panel with a given icon, text and url to redirect to.
@@ -278,7 +297,6 @@ public class ExaminePanel extends PluginPanel
 		textContainer.add(bottomLine);
 
 		container.add(textContainer, BorderLayout.CENTER);
-
 		JLabel arrowLabel = new JLabel(ARROW_RIGHT_ICON);
 		container.add(arrowLabel, BorderLayout.EAST);
 

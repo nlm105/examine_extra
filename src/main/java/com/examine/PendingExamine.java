@@ -22,13 +22,13 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package net.runelite.client.plugins.examine;
+package com.examine;
 
-import java.time.Instant;
 import lombok.Data;
+import java.time.Instant;
 
 @Data
-class PendingExamine
+public class PendingExamine
 {
 	private ExamineType type;
 	private int id;
