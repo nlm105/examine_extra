@@ -228,7 +228,7 @@ public class ExaminePlugin extends Plugin
 				NPC npc = client.getCachedNPCs()[id];
 				NPCComposition nc = npc.getTransformedComposition();
 				name = nc.getName();
-				System.out.println(npcManager.getHealth(nc.getId()));
+//				System.out.println(npcManager.getHealth(nc.getId()));
 				break;
 			default:
 				return;
@@ -241,19 +241,7 @@ public class ExaminePlugin extends Plugin
 		pendingExamine.setCreated(Instant.now());
 		pending.push(pendingExamine);
 
-		System.out.println("Type: "+type);
-		System.out.println("Game id: "+id);
-		System.out.println("Name: " + name);
-
 		ExaminePanel.rebuildOnMenuClick(type.toString(), name);
-//		NPC npc = client.getCachedNPCs()[id];
-//		NPCComposition nc = npc.getTransformedComposition();
-//		id = nc.getId();
-//		System.out.println(npcManager.getHealth(id));
-//		name = nc.getName();
-//		System.out.println("type id: " + id);
-
-//		log.debug("Name of id: " + itemManager.getItemComposition(id).getName());
 	}
 
 //	public int getId(String type, int id){
